@@ -901,7 +901,7 @@
                     <div class="signup-wrap" id="early-access">
                         <form
                             class="signup"
-                            action="https://buttondown.com/api/emails/embed-subscribe/mittnacht"
+                            action="https://buttondown.com/api/emails/embed-subscribe/velorae"
                             method="post"
                             target="buttondown-subscribe-frame"
                             data-signup-form
@@ -1131,7 +1131,7 @@
                     </p>
                     <form
                         class="signup"
-                        action="https://buttondown.com/api/emails/embed-subscribe/mittnacht"
+                        action="https://buttondown.com/api/emails/embed-subscribe/velorae"
                         method="post"
                         target="buttondown-subscribe-frame"
                         data-signup-form
@@ -1193,10 +1193,18 @@
                 const button = form.querySelector("button[type='submit']");
                 const originalText = button?.textContent ?? "Join early access";
 
-                if (button) {
-                    button.disabled = true;
-                    button.textContent = "Joining...";
-                }
+                // IMPORTANT: do not disable the submit button synchronously here.
+                // Safari/WebKit cancels the native form submission if the button
+                // that triggered it gets disabled inside the "submit" handler,
+                // which silently stops the POST to Buttondown from ever firing.
+                // Deferring it to the next tick lets the browser start the real
+                // submission first, and only then updates the button's look.
+                window.setTimeout(() => {
+                    if (button) {
+                        button.disabled = true;
+                        button.textContent = "Joining...";
+                    }
+                }, 0);
 
                 window.setTimeout(() => {
                     forms.forEach((targetForm) => {
